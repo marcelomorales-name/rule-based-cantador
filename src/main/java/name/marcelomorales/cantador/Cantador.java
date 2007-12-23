@@ -9,11 +9,17 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Cantador
+ * Rule-based formatter.
  *
+ * @author Marcelo Morales
  */
 public class Cantador {
 
+    /**
+     * Default constructor.
+     *
+     * @param rulesSpec curently unused
+     */
     public Cantador(String rulesSpec) {
         // TODO: parsear rulesSpec segun lenguaje
         rules = new LinkedList<Rule>();
@@ -75,7 +81,7 @@ public class Cantador {
         if (bigDecimal.scale() == 0) {
             return cantarParteEntera(bigDecimal);
         } else {
-             return cantarParteEntera(bigDecimal) + " " + cantarParteDecimal(bigDecimal);
+            return cantarParteEntera(bigDecimal) + " " + cantarParteDecimal(bigDecimal);
         }
     }
 

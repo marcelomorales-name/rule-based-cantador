@@ -4,7 +4,7 @@
     <groupId>name.marcelomorales</groupId>
     <artifactId>cantador</artifactId>
     <packaging>jar</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.001</version>
     <name>Rule Based Cantador</name>
     <url>http://marcelomorales.name</url>
     <build>
