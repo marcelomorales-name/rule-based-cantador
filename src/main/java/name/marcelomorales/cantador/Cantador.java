@@ -3,7 +3,10 @@ package name.marcelomorales.cantador;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.text.FieldPosition;
 import java.text.MessageFormat;
+import java.text.NumberFormat;
+import java.text.ParsePosition;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,9 +14,12 @@ import java.util.List;
 /**
  * Rule-based formatter.
  *
+ * <p>This was inspired by the IBM ICU one. But I could not make it work properly with spanish. So I did my own.</p>
+ * <p>The new Version uses the Java standard interface in addition to the original one.</p>
+ *
  * @author Marcelo Morales
  */
-public class Cantador {
+public class Cantador extends NumberFormat {
 
     /**
      * Default constructor.
@@ -21,62 +27,78 @@ public class Cantador {
      * @param rulesSpec curently unused
      */
     public Cantador(String rulesSpec) {
-        // TODO: parsear rulesSpec segun lenguaje
+        /*
+         * TODO: parsear rulesSpec segun un lenguaje a definirse.
+         *
+         * Inicial:
+         *
+         * 0 => cero
+         * 1 => un(o)
+         * ...
+         * 21 => veinti(uno|ún)
+         * 29 => veintinueve
+         * 30 => treinta[treinta y {0}]
+         */
         rules = new LinkedList<Rule>();
-        rules.add(new Rule(new BigInteger("0"), "cero", false, ""));
-        rules.add(new Rule(new BigInteger("1"), "uno", false, ""));
-        rules.add(new Rule(new BigInteger("2"), "dos", false, ""));
-        rules.add(new Rule(new BigInteger("3"), "tres", false, ""));
-        rules.add(new Rule(new BigInteger("4"), "cuatro", false, ""));
-        rules.add(new Rule(new BigInteger("5"), "cinco", false, ""));
-        rules.add(new Rule(new BigInteger("6"), "seis", false, ""));
-        rules.add(new Rule(new BigInteger("7"), "siete", false, ""));
-        rules.add(new Rule(new BigInteger("8"), "ocho", false, ""));
-        rules.add(new Rule(new BigInteger("9"), "nueve", false, ""));
-        rules.add(new Rule(new BigInteger("10"), "diez", false, ""));
-        rules.add(new Rule(new BigInteger("11"), "once", false, ""));
-        rules.add(new Rule(new BigInteger("12"), "doce", false, ""));
-        rules.add(new Rule(new BigInteger("13"), "trece", false, ""));
-        rules.add(new Rule(new BigInteger("14"), "catorce", false, ""));
-        rules.add(new Rule(new BigInteger("15"), "quince", false, ""));
-        rules.add(new Rule(new BigInteger("16"), "dieciséis", false, ""));
-        rules.add(new Rule(new BigInteger("17"), "diecisiete", false, ""));
-        rules.add(new Rule(new BigInteger("18"), "dieciocho", false, ""));
-        rules.add(new Rule(new BigInteger("19"), "diecinueve", false, ""));
-        rules.add(new Rule(new BigInteger("20"), "veinte", false, ""));
-        rules.add(new Rule(new BigInteger("21"), "veintiuno", false, ""));
-        rules.add(new Rule(new BigInteger("22"), "veintidos", false, ""));
-        rules.add(new Rule(new BigInteger("23"), "veintitrés", false, ""));
-        rules.add(new Rule(new BigInteger("24"), "veinticuatro", false, ""));
-        rules.add(new Rule(new BigInteger("25"), "veinticinco", false, ""));
-        rules.add(new Rule(new BigInteger("26"), "veintiséis", false, ""));
-        rules.add(new Rule(new BigInteger("27"), "veintisiete", false, ""));
-        rules.add(new Rule(new BigInteger("28"), "veintiocho", false, ""));
-        rules.add(new Rule(new BigInteger("29"), "veintinueve", false, ""));
-        rules.add(new Rule(new BigInteger("30"), "treinta", false, "treinta y {0}"));
-        rules.add(new Rule(new BigInteger("40"), "cuarenta", false, "cuarenta y {0}"));
-        rules.add(new Rule(new BigInteger("50"), "cincuenta", false, "cincuenta y {0}"));
-        rules.add(new Rule(new BigInteger("60"), "sesenta", false, "sesenta y {0}"));
-        rules.add(new Rule(new BigInteger("70"), "setenta", false, "setenta y {0}"));
-        rules.add(new Rule(new BigInteger("80"), "ochenta", false, "ochenta y {0}"));
-        rules.add(new Rule(new BigInteger("90"), "noventa", false, "noventa y {0}"));
-        rules.add(new Rule(new BigInteger("100"), "cien", false, ""));
+        rules.add(new Rule(new BigInteger("0"), "cero"));
+        rules.add(new Rule(new BigInteger("1"), "uno"));
+        rules.add(new Rule(new BigInteger("2"), "dos"));
+        rules.add(new Rule(new BigInteger("3"), "tres"));
+        rules.add(new Rule(new BigInteger("4"), "cuatro"));
+        rules.add(new Rule(new BigInteger("5"), "cinco"));
+        rules.add(new Rule(new BigInteger("6"), "seis"));
+        rules.add(new Rule(new BigInteger("7"), "siete"));
+        rules.add(new Rule(new BigInteger("8"), "ocho"));
+        rules.add(new Rule(new BigInteger("9"), "nueve"));
+        rules.add(new Rule(new BigInteger("10"), "diez"));
+        rules.add(new Rule(new BigInteger("11"), "once"));
+        rules.add(new Rule(new BigInteger("12"), "doce"));
+        rules.add(new Rule(new BigInteger("13"), "trece"));
+        rules.add(new Rule(new BigInteger("14"), "catorce"));
+        rules.add(new Rule(new BigInteger("15"), "quince"));
+        rules.add(new Rule(new BigInteger("16"), "dieciséis"));
+        rules.add(new Rule(new BigInteger("17"), "diecisiete"));
+        rules.add(new Rule(new BigInteger("18"), "dieciocho"));
+        rules.add(new Rule(new BigInteger("19"), "diecinueve"));
+        rules.add(new Rule(new BigInteger("20"), "veinte"));
+        rules.add(new Rule(new BigInteger("21"), "veintiuno"));
+        rules.add(new Rule(new BigInteger("22"), "veintidos"));
+        rules.add(new Rule(new BigInteger("23"), "veintitrés"));
+        rules.add(new Rule(new BigInteger("24"), "veinticuatro"));
+        rules.add(new Rule(new BigInteger("25"), "veinticinco"));
+        rules.add(new Rule(new BigInteger("26"), "veintiséis"));
+        rules.add(new Rule(new BigInteger("27"), "veintisiete"));
+        rules.add(new Rule(new BigInteger("28"), "veintiocho"));
+        rules.add(new Rule(new BigInteger("29"), "veintinueve"));
+        rules.add(new Rule(new BigInteger("30"), "treinta", "treinta y {0}"));
+        rules.add(new Rule(new BigInteger("40"), "cuarenta", "cuarenta y {0}"));
+        rules.add(new Rule(new BigInteger("50"), "cincuenta", "cincuenta y {0}"));
+        rules.add(new Rule(new BigInteger("60"), "sesenta", "sesenta y {0}"));
+        rules.add(new Rule(new BigInteger("70"), "setenta", "setenta y {0}"));
+        rules.add(new Rule(new BigInteger("80"), "ochenta", "ochenta y {0}"));
+        rules.add(new Rule(new BigInteger("90"), "noventa", "noventa y {0}"));
+        rules.add(new Rule(new BigInteger("100"), "cien"));
         rules.add(new Rule(new BigInteger("101"), "", false, "ciento {0}", new BigInteger("1")));
-        rules.add(new Rule(new BigInteger("200"), "doscientos", false, "doscientos {0}"));
-        rules.add(new Rule(new BigInteger("300"), "trescientos", false, "trescientos {0}"));
-        rules.add(new Rule(new BigInteger("400"), "cuatrocientos", false, "cuatrocientos {0}"));
-        rules.add(new Rule(new BigInteger("500"), "quinientos", false, "quinientos {0}"));
-        rules.add(new Rule(new BigInteger("600"), "seiscientos", false, "seiscientos {0}"));
-        rules.add(new Rule(new BigInteger("700"), "setecientos", false, "setecientos {0}"));
-        rules.add(new Rule(new BigInteger("800"), "ochocientos", false, "ochocientos {0}"));
-        rules.add(new Rule(new BigInteger("900"), "novecientos", false, "novecientos {0}"));
-        rules.add(new Rule(new BigInteger("1000"), "mil", true, "{1} mil{0}"));
-        rules.add(new Rule(new BigInteger("1000000"), "un millón", false, "un millón {0}"));
-        rules.add(new Rule(new BigInteger("2000000"), "millones", true, "{1} millones{0}"));
+        rules.add(new Rule(new BigInteger("200"), "doscientos", "doscientos {0}"));
+        rules.add(new Rule(new BigInteger("300"), "trescientos", "trescientos {0}"));
+        rules.add(new Rule(new BigInteger("400"), "cuatrocientos", "cuatrocientos {0}"));
+        rules.add(new Rule(new BigInteger("500"), "quinientos", "quinientos {0}"));
+        rules.add(new Rule(new BigInteger("600"), "seiscientos", "seiscientos {0}"));
+        rules.add(new Rule(new BigInteger("700"), "setecientos", "setecientos {0}"));
+        rules.add(new Rule(new BigInteger("800"), "ochocientos", "ochocientos {0}"));
+        rules.add(new Rule(new BigInteger("900"), "novecientos", "novecientos {0}"));
+        rules.add(new Rule(new BigInteger("1000"), "mil", "{1} mil{0}"));
+        rules.add(new Rule(new BigInteger("1000000"), "un millón", "un millón {0}"));
+        rules.add(new Rule(new BigInteger("2000000"), "millones", "{1} millones{0}"));
     }
 
     private List<Rule> rules;
 
+    /**
+     * Sings the decimal.
+     * @param bigDecimal the decimal.
+     * @return a song representing the decimal.
+     */
     public String cantar(BigDecimal bigDecimal) {
         if (bigDecimal.scale() == 0) {
             return cantarParteEntera(bigDecimal);
@@ -85,15 +107,10 @@ public class Cantador {
         }
     }
 
-    /**
-     * Sings the decimal.
-     * @param bigDecimal the decimal.
-     * @return a song representing the decimal.
-     */
-    public String cantarParteEntera(BigDecimal bigDecimal) {
+    private String cantarParteEntera(BigDecimal bigDecimal) {
         BigInteger integerPart = bigDecimal.toBigInteger();
 
-        int i = Collections.binarySearch(rules, new Rule(integerPart, null, false, null));
+        int i = Collections.binarySearch(rules, new Rule(integerPart, null, null));
         if (i < 0) {
             i = -i - 2;
         }
@@ -114,11 +131,15 @@ public class Cantador {
                 return MessageFormat.format(rules.get(i).literalcompleto, "", cantadoMayor);
             } else {
                 /*
-                 * TODO: este espacio no me gusta.
+                 * TODO: este espacio no me gusta. No puede parametrizarse correctamente. Me imagino que algun idioma
+                 * podria no tener espacio entre los numeros.
                  */
                 return MessageFormat.format(rules.get(i).literalcompleto, " " + cantar(menor), cantadoMayor);
             }
         }
+        /*
+         * TODO: este subtract ciertamente le quita elegancia al problema.
+         */
         integerPart = integerPart.subtract(rules.get(i).index.subtract(rules.get(i).minus));
         if (integerPart.signum() > 0) {
             String parteSiguiente = cantar(new BigDecimal(integerPart));
@@ -129,7 +150,7 @@ public class Cantador {
 
     private String cantarParteDecimal(BigDecimal bigDecimal) {
         /*
-         * TODO: no internacionalizado
+         * TODO: no internacionalizado y no sigue las reglas. como hacer reglas para el decimal?
          */
         bigDecimal = bigDecimal.subtract(new BigDecimal(bigDecimal.toBigInteger()));
         BigInteger bi = bigDecimal.movePointRight(2).toBigInteger();
@@ -139,11 +160,23 @@ public class Cantador {
 
     private class Rule implements Comparable<Rule> {
 
-        public Rule(BigInteger index, String literal, boolean recursegreater, String completo) {
+        public Rule(BigInteger index, String literal) {
+            this.index = index;
+            this.literal = literal;
+            this.literalcompleto = "";
+            this.recursegreater = false;
+            this.minus = BigInteger.ZERO;
+        }
+
+        public Rule(BigInteger index, String literal, String completo) {
             this.index = index;
             this.literal = literal;
             this.literalcompleto = completo;
-            this.recursegreater = recursegreater;
+            if (completo != null) {
+                this.recursegreater = completo.contains("{1}");
+            } else {
+                this.recursegreater = false;
+            }
             this.minus = BigInteger.ZERO;
         }
 
@@ -168,5 +201,49 @@ public class Cantador {
         public int compareTo(Cantador.Rule o) {
             return index.compareTo(o.index);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     * @since 0.002
+     */
+    @Override
+    public StringBuffer format(Object number, StringBuffer toAppendTo, FieldPosition pos) {
+        if (number instanceof BigDecimal) {
+            /*
+             * TODO: por que ignoramos pos? por lo menos deberia verificar si mostar decimales o no?
+             */
+            toAppendTo.append(this.cantar((BigDecimal) number));
+            return toAppendTo;
+        } else {
+            return super.format(number, toAppendTo, pos);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     * @since 0.002
+     */
+    @Override
+    public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {
+        return format(new BigDecimal(number), toAppendTo, pos);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @since 0.002
+     */
+    @Override
+    public StringBuffer format(long number, StringBuffer toAppendTo, FieldPosition pos) {
+        return format(new BigDecimal(number), toAppendTo, pos);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @since 0.002
+     */
+    @Override
+    public Number parse(String source, ParsePosition parsePosition) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
