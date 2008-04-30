@@ -1,7 +1,7 @@
 package name.marcelomorales.cantador;
 
 import java.math.BigDecimal;
-import java.text.Format;
+import java.util.Locale;
 import junit.framework.TestCase;
 
 /**
@@ -18,7 +18,7 @@ public class CantadorTest extends TestCase {
      * Test of cantar method, of class Cantador.
      */
     public void testCantar() {
-        Cantador instance = new Cantador("xxx");
+        Cantador instance = Cantador.newCardinalInstance(new Locale("es", "BO"));
         assertEquals("cero", instance.cantar(BigDecimal.ZERO));
         assertEquals("uno", instance.cantar(new BigDecimal("1")));
         assertEquals("dos", instance.cantar(new BigDecimal("2")));
@@ -48,6 +48,7 @@ public class CantadorTest extends TestCase {
         assertEquals("noventa y nueve", instance.cantar(new BigDecimal("99")));
         assertEquals("cien", instance.cantar(new BigDecimal("100")));
         assertEquals("ciento uno", instance.cantar(new BigDecimal("101")));
+        assertEquals("ciento dos", instance.cantar(new BigDecimal("102")));
         assertEquals("ciento quince", instance.cantar(new BigDecimal("115")));
         assertEquals("ciento noventa y nueve", instance.cantar(new BigDecimal("199")));
         assertEquals("doscientos", instance.cantar(new BigDecimal("200")));
@@ -63,6 +64,7 @@ public class CantadorTest extends TestCase {
         assertEquals("nueve mil quinientos diez", instance.cantar(new BigDecimal("9510")));
         assertEquals("quince mil ochocientos veinticinco", instance.cantar(new BigDecimal("15825")));
         assertEquals("cien mil veinticinco", instance.cantar(new BigDecimal("100025")));
+        assertEquals("ciento veinticinco mil", instance.cantar(new BigDecimal("125000")));
         assertEquals("trescientos un mil uno", instance.cantar(new BigDecimal("301001")));
         assertEquals("novecientos noventa y nueve mil novecientos noventa y nueve",
                 instance.cantar(new BigDecimal("999999")));
@@ -74,7 +76,7 @@ public class CantadorTest extends TestCase {
     }
 
     public void testCantarDecimales() {
-        Cantador instance = new Cantador("xxx");
+        Cantador instance = Cantador.newInstance("xxx");
         assertEquals("uno 00/100", instance.cantar(new BigDecimal("1.00")));
         assertEquals("uno 50/100", instance.cantar(new BigDecimal("1.5")));
         assertEquals("tres 50/100", instance.cantar(new BigDecimal("3.50000001")));
@@ -82,7 +84,7 @@ public class CantadorTest extends TestCase {
     }
 
     public void testCantarComoFormat() {
-        Format instance = new Cantador("xxx");
+        Cantador instance = Cantador.newInstance("xxx");
         assertEquals("treinta y dos", instance.format(32));
     }
 }
