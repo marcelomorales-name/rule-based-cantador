@@ -24,6 +24,8 @@ import java.util.TreeSet;
  */
 public class Cantador extends NumberFormat {
 
+    static final long serialVersionUID = 8973982743L;
+
     private static final String[][] cardinals = {{"es_BO", "x"}};
 
     /*
@@ -118,9 +120,9 @@ public class Cantador extends NumberFormat {
         rules.add(new Rule(new BigInteger("700"), "setecientos", "setecientos {0}"));
         rules.add(new Rule(new BigInteger("800"), "ochocientos", "ochocientos {0}"));
         rules.add(new Rule(new BigInteger("900"), "novecientos", "novecientos {0}"));
-        rules.add(new Rule(new BigInteger("1000"), "un mil", "{1} mil{ 0}"));
+        rules.add(new Rule(new BigInteger("1000"), null, "{1} mil_{0}"));
         rules.add(new Rule(new BigInteger("1000000"), "un millón", "un millón {0}"));
-        rules.add(new Rule(new BigInteger("2000000"), "millones", "{1} millones{ 0}"));
+        rules.add(new Rule(new BigInteger("2000000"), "millones", "{1} millones_{0}"));
     }
 
     private List<Rule> rules;
@@ -160,7 +162,7 @@ public class Cantador extends NumberFormat {
             if (menor.equals(BigDecimal.ZERO)) {
                 return MessageFormat.format(rules.get(i).literalcompleto, "", cantadoMayor);
             } else {
-                return MessageFormat.format(rules.get(i).literalcompleto, cantar(menor), cantadoMayor);
+                return MessageFormat.format(rules.get(i).literalcompletoWithSpace, cantar(menor), cantadoMayor);
             }
         }
         integerPart = integerPart.subtract(rules.get(i).index);
@@ -188,17 +190,26 @@ public class Cantador extends NumberFormat {
             this.literal = literal;
             this.literalcompleto = "";
             this.recursegreater = false;
+            this.literalcompletoWithSpace = "";
         }
 
         public Rule(BigInteger index, String literal, String completo) {
             this.index = index;
             this.literal = literal;
-            this.literalcompleto = completo;
-            if (completo != null) {
-                this.recursegreater = completo.contains("{1}");
-            } else {
+            if (completo == null) {
                 this.recursegreater = false;
+                this.literalcompletoWithSpace = "";
+                this.literalcompleto = "";
+                return;
             }
+            this.recursegreater = completo.contains("{1}");
+            if (completo.contains("_")) {
+                this.literalcompleto = completo.replace("_", "");
+                this.literalcompletoWithSpace = completo.replace("_", " ");
+                return;
+            }
+            this.literalcompleto = completo;
+            this.literalcompletoWithSpace = completo;
         }
 
         BigInteger index;
@@ -208,6 +219,8 @@ public class Cantador extends NumberFormat {
         String literalcompleto;
 
         boolean recursegreater;
+        
+        String literalcompletoWithSpace;
 
         public int compareTo(Cantador.Rule o) {
             return index.compareTo(o.index);

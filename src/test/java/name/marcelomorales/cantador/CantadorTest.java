@@ -57,6 +57,8 @@ public class CantadorTest extends TestCase {
         assertEquals("novecientos noventa y nueve", instance.cantar(new BigDecimal("999")));
         assertEquals("un mil", instance.cantar(new BigDecimal("1000")));
         assertEquals("un mil uno", instance.cantar(new BigDecimal("1001")));
+        assertEquals("un mil veintitrés", instance.cantar(new BigDecimal("1023")));
+        assertEquals("un mil ochocientos veintidos", instance.cantar(new BigDecimal("1822")));
         assertEquals("un mil novecientos noventa y nueve", instance.cantar(new BigDecimal("1999")));
         assertEquals("dos mil", instance.cantar(new BigDecimal("2000")));
         assertEquals("dos mil uno", instance.cantar(new BigDecimal("2001")));
