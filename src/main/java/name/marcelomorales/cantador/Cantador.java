@@ -118,9 +118,9 @@ public class Cantador extends NumberFormat {
         rules.add(new Rule(new BigInteger("700"), "setecientos", "setecientos {0}"));
         rules.add(new Rule(new BigInteger("800"), "ochocientos", "ochocientos {0}"));
         rules.add(new Rule(new BigInteger("900"), "novecientos", "novecientos {0}"));
-        rules.add(new Rule(new BigInteger("1000"), "un mil", "{1} mil{0}"));
+        rules.add(new Rule(new BigInteger("1000"), "un mil", "{1} mil{ 0}"));
         rules.add(new Rule(new BigInteger("1000000"), "un millón", "un millón {0}"));
-        rules.add(new Rule(new BigInteger("2000000"), "millones", "{1} millones{0}"));
+        rules.add(new Rule(new BigInteger("2000000"), "millones", "{1} millones{ 0}"));
     }
 
     private List<Rule> rules;
@@ -160,7 +160,7 @@ public class Cantador extends NumberFormat {
             if (menor.equals(BigDecimal.ZERO)) {
                 return MessageFormat.format(rules.get(i).literalcompleto, "", cantadoMayor);
             } else {
-                return MessageFormat.format(rules.get(i).literalcompleto, " " + cantar(menor), cantadoMayor);
+                return MessageFormat.format(rules.get(i).literalcompleto, cantar(menor), cantadoMayor);
             }
         }
         integerPart = integerPart.subtract(rules.get(i).index);
