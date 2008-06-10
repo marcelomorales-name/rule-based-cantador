@@ -1,3 +1,25 @@
+/*
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+ *
+ * PLEASE KEEP THE UTF-8 ENCODING
+ *
+ * Copyright (C) 2008 Marcelo Morales (marcelomorales.name@gmail.com)
+ *
+ *   This file is part of Rulebased Cantador.
+ *
+ *   Rulebased Cantador is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package name.marcelomorales.cantador;
 
 import java.math.BigDecimal;
@@ -17,16 +39,24 @@ import java.util.TreeSet;
 /**
  * Rule-based formatter.
  *
+ * <h1>History</h1>
  * <p>This was inspired by the IBM ICU one. But I could not make it work properly in spanish. So I did my own.</p>
- * <p>The new Version uses the Java standard interface in addition to the original one.</p>
+ *
+ * <p>I started using the binary search algorithm because I did not like using arithmetics. I really didn't know
+ * (I still don't) if it is the best aproach, but it seemed a little more elegant to me. This became the 0.001 release
+ * that I used in some of my projects. This was also released under a proprietary licence.</p>
+ *
+ * <p>For the 0.002 release, I implemented the standard NumberFormat Java interface. Cleaned up the algorithm a
+ * little bit. I changed the license to GPL v3. I externalized the construction of the formatter. Then there were two
+ * methods for defining the format ruleset: chaining and the language.</p>
  *
  * @author Marcelo Morales
  */
 public class Cantador extends NumberFormat {
 
-    static final long serialVersionUID = 8973982743L;
+    static final long serialVersionUID = 8973982744L;
 
-    private static final String[][] cardinals = {{"es_BO", "x"}};
+    private static final String[][] cardinals = {{"es_BO", null}};
 
     /*
      * TODO: http://en.wikipedia.org/wiki/Names_of_numbers_in_English
@@ -156,7 +186,8 @@ public class Cantador extends NumberFormat {
             String cantadoMayor = cantar(mayor);
             for (Apokoptos a : apokoptos) { // HAS to be sorted!
                 if (cantadoMayor.endsWith(a.haystack)) {
-                    cantadoMayor = cantadoMayor.substring(0, cantadoMayor.length() - a.haystack.length()).concat(a.needle);
+                    cantadoMayor = cantadoMayor.substring(0, cantadoMayor.length() - a.haystack.length()).concat(
+                            a.needle);
                 }
             }
             if (menor.equals(BigDecimal.ZERO)) {
@@ -219,7 +250,7 @@ public class Cantador extends NumberFormat {
         String literalcompleto;
 
         boolean recursegreater;
-        
+
         String literalcompletoWithSpace;
 
         public int compareTo(Cantador.Rule o) {
