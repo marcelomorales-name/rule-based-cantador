@@ -1,0 +1,115 @@
+/*
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+ *
+ * PLEASE KEEP UTF-8 ENCODING
+ *
+ * Copyright (C) 2008 Marcelo Morales (marcelomorales.name@gmail.com)
+ *
+ *   This file is part of Rulebased Cantador.
+ *
+ *   Rulebased Cantador is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+options {
+  JAVA_UNICODE_ESCAPE = true;
+  JDK_VERSION = "1.5";
+  STATIC = false;
+  UNICODE_INPUT = true;
+}
+
+PARSER_BEGIN(CantadorSpec)
+package name.marcelomorales.cantador.parser;
+import name.marcelomorales.cantador.Cantador;
+public class CantadorSpec extends Cantador {
+}
+PARSER_END(CantadorSpec)
+
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+| "\f"
+}
+
+TOKEN :
+{
+  < NUM: ( ["0"-"9"] )+ >
+|
+  < LITERAL:
+      "<"
+      (
+       (~["\\","\n","\r","<",">","[","]","(",")","|"])
+        | ("\\"
+            ( ["n","t","b","r","f","\\","<",">","[","]","(",")","|"] )
+          )
+      )*
+  >
+|
+  < OPTIONAL:
+      "("
+      (
+       (~["\\","\n","\r","<",">","[","]","(",")","|"])
+        | ("\\"
+            ( ["n","t","b","r","f","\\","<",">","[","]","(",")","|"] )
+          )
+      )*
+  >
+|
+  < REPLACEMENT:
+      "|"
+      (
+       (~["\\","\n","\r","<",">","[","]","(",")","|"])
+        | ("\\"
+            ( ["n","t","b","r","f","\\","<",">","[","]","(",")","|"] )
+          )
+      )*
+  >
+|
+  < COMPOSITE:
+      "["
+      (
+       (~["\\","\n","\r","<",">","[","]","(",")","|"])
+        | ("\\"
+            ( ["n","t","b","r","f","\\","<",">","[","]","(",")","|"] )
+          )
+      )*
+      "]"
+  >
+}
+
+void Input() :
+{}
+{
+  Rules()
+}
+
+void Rules() :
+{}
+{
+  <NUM> "=>" <LITERAL> [ Apocopado() ] [ CompositeForm() ] ">" [ Rules() ]
+}
+
+void Apocopado() :
+{}
+{
+  <OPTIONAL> [ <REPLACEMENT> ] ")"
+}
+
+void CompositeForm() :
+{}
+{
+  <COMPOSITE>
+}

@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * PLEASE KEEP THE UTF-8 ENCODING
+ * PLEASE KEEP UTF-8 ENCODING
  *
  * Copyright (C) 2008 Marcelo Morales (marcelomorales.name@gmail.com)
  *
@@ -22,9 +22,12 @@
  */
 package name.marcelomorales.cantador;
 
+import java.io.StringReader;
 import java.math.BigDecimal;
 import java.util.Locale;
 import junit.framework.TestCase;
+import name.marcelomorales.cantador.parser.CantadorSpec;
+import name.marcelomorales.cantador.parser.ParseException;
 
 /**
  * Test for Cantador
@@ -109,7 +112,25 @@ public class CantadorTest extends TestCase {
     }
 
     public void testCantarComoFormat() {
+        try {
+            Cantador.newCardinalInstance();
+        } catch (Exception e) {
+        }
         Cantador instance = Cantador.newInstance("xxx");
         assertEquals("treinta y dos", instance.format(32));
+    }
+
+    public void testParser() throws ParseException {
+        StringReader reader = new StringReader("0 => <cero>");
+        new CantadorSpec(reader).Input();
+        reader = new StringReader(
+                "0 => <cero>\n" +
+                "1 => <un(o)>\n" +
+                "2 => <do(s|sitos)>\n" +
+                "21 => <veinti(uno|\u00fan)>\n" +
+                "29 => <veintinueve>\n" +
+                "30 => <treinta[treinta y {0}]>\n" +
+                "1000 => <[{1} mil_{0}]>\n");
+        new CantadorSpec(reader).Input();
     }
 }
