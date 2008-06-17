@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * PLEASE KEEP THE UTF-8 ENCODING
+ * PLEASE KEEP UTF-8 ENCODING
  *
  * Copyright (C) 2008 Marcelo Morales (marcelomorales.name@gmail.com)
  *
@@ -82,6 +82,23 @@ public class Cantador extends NumberFormat {
         return new Cantador(rulespec);
     }
 
+    protected void addRule(String number, String shortLiteral) {
+        rules.add(new Rule(new BigInteger(number), shortLiteral));
+    }
+
+    protected void addRule(String number, String shortLiteral, String longLiteral) {
+        rules.add(new Rule(new BigInteger(number), shortLiteral, longLiteral));
+    }
+
+    protected void addApokoptos(String haystack, String needle) {
+        apokoptos.add(new Apokoptos(haystack, needle));
+    }
+    
+    protected Cantador() {
+        rules = new LinkedList<Rule>();
+        apokoptos = new TreeSet<Apokoptos>();
+    }
+
     /**
      * Default constructor.
      *
@@ -89,20 +106,17 @@ public class Cantador extends NumberFormat {
      */
     private Cantador(String rulesSpec) {
         /*
-         * TODO: parsear rulesSpec segun un lenguaje a definirse.
-         *
-         * Inicial:
-         *
-         * 0 => cero
-         * 1 => un(o)
+         * 0 => <cero>
+         * 1 => <un(o)>
          * ...
-         * 21 => veinti(uno|ún)
-         * 29 => veintinueve
-         * 30 => treinta[treinta y {0}]
+         * 21 => <veinti(uno|ún)>
+         * 29 => <veintinueve>
+         * 30 => <treinta[treinta y {0}]>
+         * 1000 => <[{1} mil_{0}]>
          */
         rules = new LinkedList<Rule>();
         apokoptos = new TreeSet<Apokoptos>();
-        rules.add(new Rule(new BigInteger("0"), "cero"));
+        rules.add(new Rule(new BigInteger("0"), "cero", null));
         rules.add(new Rule(new BigInteger("1"), "uno"));
         apokoptos.add(new Apokoptos("uno", "un"));
         rules.add(new Rule(new BigInteger("2"), "dos"));
@@ -214,7 +228,7 @@ public class Cantador extends NumberFormat {
         return "0".substring(0, 2 - s.length()) + s + "/100";
     }
 
-    private class Rule implements Comparable<Rule> {
+    private static class Rule implements Comparable<Rule> {
 
         public Rule(BigInteger index, String literal) {
             this.index = index;
@@ -258,7 +272,7 @@ public class Cantador extends NumberFormat {
         }
     }
 
-    private class Apokoptos implements Comparable<Apokoptos> {
+    private static class Apokoptos implements Comparable<Apokoptos> {
 
         public Apokoptos(String haystack, String needle) {
             this.haystack = haystack;
