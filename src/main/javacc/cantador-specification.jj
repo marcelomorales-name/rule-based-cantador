@@ -86,7 +86,6 @@ TOKEN :
             ( ["n","t","b","r","f","\\","<",">","[","]","(",")","|"] )
           )
       )*
-      "]"
   >
 }
 
@@ -97,19 +96,37 @@ void Input() :
 }
 
 void Rules() :
-{}
 {
-  <NUM> "=>" <LITERAL> [ Apocopado() ] [ CompositeForm() ] ">" [ Rules() ]
+  Token numero;
+  Token literal;
+  Token composite = null;
+  Token optional = null;
+  Token replacement = null;
+}
+{
+  numero = <NUM> "=>" 
+  literal = <LITERAL>
+    [ optional = <OPTIONAL>
+      [ replacement = <REPLACEMENT> ] ")"
+    ]
+    [ composite = <COMPOSITE> "]" ] ">" [ Rules() ]
+  {
+    if (composite == null) {
+        if (optional == null) {
+            addRule(numero.toString(), literal.toString().substring(1));
+        } else {
+            addRule(numero.toString(), literal.toString().substring(1) + optional.toString().substring(1));
+            if (replacement == null) {
+                addApokoptos(literal.toString().substring(1) + optional.toString().substring(1),
+                        literal.toString().substring(1));
+            } else {
+                addApokoptos(literal.toString().substring(1) + optional.toString().substring(1),
+                        literal.toString().substring(1) + replacement.toString().substring(1));
+            }
+        }
+    } else {
+        addRule(numero.toString(), literal.toString().substring(1), composite.toString().substring(1));
+    }
+  }
 }
 
-void Apocopado() :
-{}
-{
-  <OPTIONAL> [ <REPLACEMENT> ] ")"
-}
-
-void CompositeForm() :
-{}
-{
-  <COMPOSITE>
-}

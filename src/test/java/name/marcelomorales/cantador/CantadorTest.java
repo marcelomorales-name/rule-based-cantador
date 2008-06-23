@@ -124,13 +124,22 @@ public class CantadorTest extends TestCase {
         StringReader reader = new StringReader("0 => <cero>");
         new CantadorSpec(reader).Input();
         reader = new StringReader(
-                "0 => <cero>\n" +
-                "1 => <un(o)>\n" +
-                "2 => <do(s|sitos)>\n" +
-                "21 => <veinti(uno|\u00fan)>\n" +
-                "29 => <veintinueve>\n" +
-                "30 => <treinta[treinta y {0}]>\n" +
-                "1000 => <[{1} mil_{0}]>\n");
-        new CantadorSpec(reader).Input();
+                "0 => <cero>" +
+                "1 => <un(o)>" +
+                "2 => <do(s|sitos)>" +
+                "21 => <veinti(uno|\u00fan)>" +
+                "29 => <veintinueve>" +
+                "30 => <treinta[treinta y {0}]>" +
+                "1000 => <[{1} mil_{0}]>");
+        CantadorSpec sp = new CantadorSpec(reader);
+        sp.Input();
+        assertEquals("cero", sp.cantar(new BigDecimal("0")));
+        assertEquals("uno", sp.cantar(new BigDecimal("1")));
+        assertEquals("dos", sp.cantar(new BigDecimal("2")));
+        assertEquals("veintiuno", sp.cantar(new BigDecimal("21")));
+        assertEquals("treinta", sp.cantar(new BigDecimal("30")));
+        assertEquals("treinta y uno", sp.cantar(new BigDecimal("31")));
+        assertEquals("un mil", sp.cantar(new BigDecimal("1000")));
+        assertEquals("dositos mil uno", sp.cantar(new BigDecimal("2001")));
     }
 }

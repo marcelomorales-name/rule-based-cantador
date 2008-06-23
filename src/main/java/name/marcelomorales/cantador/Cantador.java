@@ -58,6 +58,12 @@ public class Cantador extends NumberFormat {
 
     private static final String[][] cardinals = {{"es_BO", null}};
 
+    private List<Rule> rules;
+
+    private SortedSet<Apokoptos> apokoptos;
+
+    private boolean finished;
+
     /*
      * TODO: http://en.wikipedia.org/wiki/Names_of_numbers_in_English
      */
@@ -83,20 +89,42 @@ public class Cantador extends NumberFormat {
     }
 
     protected void addRule(String number, String shortLiteral) {
-        rules.add(new Rule(new BigInteger(number), shortLiteral));
+        if (finished) {
+            throw new IllegalStateException("This one is already finished, can't add more rules");
+        }
+        Rule r = new Rule(new BigInteger(number), shortLiteral);
+        if (rules.contains(r)) {
+            rules.remove(r);
+        }
+        rules.add(r);
     }
 
     protected void addRule(String number, String shortLiteral, String longLiteral) {
-        rules.add(new Rule(new BigInteger(number), shortLiteral, longLiteral));
+        if (finished) {
+            throw new IllegalStateException("This one is already finished, can't add more rules");
+        }
+        Rule r = new Rule(new BigInteger(number), shortLiteral, longLiteral);
+        if (rules.contains(r)) {
+            rules.remove(r);
+        }
+        rules.add(r);
     }
 
     protected void addApokoptos(String haystack, String needle) {
-        apokoptos.add(new Apokoptos(haystack, needle));
+        if (finished) {
+            throw new IllegalStateException("This one is already finished, can't add more rules");
+        }
+        Apokoptos a = new Apokoptos(haystack, needle);
+        if (apokoptos.contains(a)) {
+            apokoptos.remove(a);
+        }
+        apokoptos.add(a);
     }
     
     protected Cantador() {
         rules = new LinkedList<Rule>();
         apokoptos = new TreeSet<Apokoptos>();
+        finished = false;
     }
 
     /**
@@ -105,6 +133,7 @@ public class Cantador extends NumberFormat {
      * @param rulesSpec curently unused
      */
     private Cantador(String rulesSpec) {
+        finished = true;
         /*
          * 0 => <cero>
          * 1 => <un(o)>
@@ -169,16 +198,16 @@ public class Cantador extends NumberFormat {
         rules.add(new Rule(new BigInteger("2000000"), "millones", "{1} millones_{0}"));
     }
 
-    private List<Rule> rules;
-
-    private SortedSet<Apokoptos> apokoptos;
-
     /**
      * Sings the decimal.
      * @param bigDecimal the decimal.
      * @return a song representing the decimal.
      */
     public String cantar(BigDecimal bigDecimal) {
+        if (!finished) {
+            Collections.sort(rules);
+            finished = true;
+        }
         if (bigDecimal.scale() == 0) {
             return cantarParteEntera(bigDecimal);
         } else {
@@ -192,6 +221,9 @@ public class Cantador extends NumberFormat {
         int i = Collections.binarySearch(rules, new Rule(integerPart, null));
         if (i < 0) {
             i = -i - 2;
+        }
+        if (i == -1) {
+            return "<invalid rules applied>";
         }
         if (rules.get(i).recursegreater) {
             int howManyDigits = rules.get(i).index.toString().length() - 1;
