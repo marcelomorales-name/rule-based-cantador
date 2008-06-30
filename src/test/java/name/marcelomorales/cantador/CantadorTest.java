@@ -31,7 +31,7 @@ import name.marcelomorales.cantador.parser.ParseException;
 
 /**
  * Test for CantadorBase
- * @see name.marcelomorales.cantador.CantadorBase
+ * @see name.marcelomorales.cantador.Cantador
  * @author Marcelo Morales
  */
 public class CantadorTest extends TestCase {
@@ -44,7 +44,7 @@ public class CantadorTest extends TestCase {
      * Test of cantar method, of class CantadorBase.
      */
     public void testCantar() {
-        CantadorBase instance = Cantador.newCardinalInstance(new Locale("es", "BO"));
+        Cantador instance = Cantador.newCardinalInstance(new Locale("es", "BO"));
         assertEquals("cero", instance.cantar(BigDecimal.ZERO));
         assertEquals("uno", instance.cantar(new BigDecimal("1")));
         assertEquals("dos", instance.cantar(new BigDecimal("2")));

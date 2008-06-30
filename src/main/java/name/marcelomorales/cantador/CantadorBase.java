@@ -48,7 +48,7 @@ import java.util.TreeSet;
  *
  * <p>For the 0.002 release, I implemented the standard NumberFormat Java interface. Cleaned up the algorithm a
  * little bit. I changed the license to GPL v3. I externalized the construction of the formatter. Then there were two
- * methods for defining the format ruleset: chaining and the language.</p>
+ * methods for defining the format ruleset: chaining and the language (a very simple grammar).</p>
  *
  * @author Marcelo Morales
  */
@@ -94,7 +94,7 @@ public class CantadorBase extends NumberFormat {
         }
         apokoptos.add(a);
     }
-    
+
     protected CantadorBase() {
         rules = new LinkedList<Rule>();
         apokoptos = new TreeSet<Apokoptos>();
@@ -205,6 +205,28 @@ public class CantadorBase extends NumberFormat {
         public int compareTo(CantadorBase.Rule o) {
             return index.compareTo(o.index);
         }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final Rule other = (Rule) obj;
+            if (this.index != other.index && (this.index == null || !this.index.equals(other.index))) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 5;
+            hash = 23 * hash + (this.index != null ? this.index.hashCode() : 0);
+            return hash;
+        }
     }
 
     private static class Apokoptos implements Comparable<Apokoptos> {
@@ -223,6 +245,28 @@ public class CantadorBase extends NumberFormat {
 
         public int compareTo(Apokoptos o) {
             return o.len.compareTo(len);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final Apokoptos other = (Apokoptos) obj;
+            if (this.len != other.len && (this.len == null || !this.len.equals(other.len))) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 67 * hash + (this.len != null ? this.len.hashCode() : 0);
+            return hash;
         }
     }
 
