@@ -30,8 +30,8 @@ import name.marcelomorales.cantador.parser.CantadorSpec;
 import name.marcelomorales.cantador.parser.ParseException;
 
 /**
- * Test for Cantador
- * @see name.marcelomorales.cantador.Cantador
+ * Test for CantadorBase
+ * @see name.marcelomorales.cantador.CantadorBase
  * @author Marcelo Morales
  */
 public class CantadorTest extends TestCase {
@@ -41,10 +41,10 @@ public class CantadorTest extends TestCase {
     }
 
     /**
-     * Test of cantar method, of class Cantador.
+     * Test of cantar method, of class CantadorBase.
      */
     public void testCantar() {
-        Cantador instance = Cantador.newCardinalInstance(new Locale("es", "BO"));
+        CantadorBase instance = Cantador.newCardinalInstance(new Locale("es", "BO"));
         assertEquals("cero", instance.cantar(BigDecimal.ZERO));
         assertEquals("uno", instance.cantar(new BigDecimal("1")));
         assertEquals("dos", instance.cantar(new BigDecimal("2")));
@@ -100,23 +100,28 @@ public class CantadorTest extends TestCase {
         assertEquals("un millón trescientos un mil ciento dieciséis", instance.cantar(new BigDecimal("1301116")));
         assertEquals("veintiún millones", instance.cantar(new BigDecimal("21000000")));
         assertEquals("veintiún millones uno", instance.cantar(new BigDecimal("21000001")));
-        assertEquals("ciento un millones", instance.cantar(new BigDecimal("101000000")));
+        assertEquals("ciento un millones diez", instance.cantar(new BigDecimal("101000010")));
+        assertEquals("un mil millones diez", instance.cantar(new BigDecimal("1000000010")));
+        assertEquals("diez mil millones diez", instance.cantar(new BigDecimal("10000000010")));
+        assertEquals("diez mil cien millones ciento diez", instance.cantar(new BigDecimal("10100000110")));
+        assertEquals("ciento once mil ciento once millones ciento once mil ciento once",
+                instance.cantar(new BigDecimal("111111111111")));
     }
 
-    public void testCantarDecimales() {
-        Cantador instance = Cantador.newInstance("xxx");
+    public void testCantarDecimales() throws ParseException {
+        CantadorBase instance = Cantador.newCardinalInstance(new Locale("es", "BO"));
         assertEquals("uno 00/100", instance.cantar(new BigDecimal("1.00")));
         assertEquals("uno 50/100", instance.cantar(new BigDecimal("1.5")));
         assertEquals("tres 50/100", instance.cantar(new BigDecimal("3.50000001")));
         assertEquals("uno 94/100", instance.cantar(new BigDecimal("1.94")));
     }
 
-    public void testCantarComoFormat() {
+    public void testCantarComoFormat() throws ParseException {
         try {
             Cantador.newCardinalInstance();
         } catch (Exception e) {
         }
-        Cantador instance = Cantador.newInstance("xxx");
+        CantadorBase instance = Cantador.newCardinalInstance(new Locale("es", "BO"));
         assertEquals("treinta y dos", instance.format(32));
     }
 
@@ -126,7 +131,7 @@ public class CantadorTest extends TestCase {
         reader = new StringReader(
                 "0 => <cero>" +
                 "1 => <un(o)>" +
-                "2 => <do(s|sitos)>" +
+                "2 => <do(sitos|s)>" +
                 "21 => <veinti(uno|\u00fan)>" +
                 "29 => <veintinueve>" +
                 "30 => <treinta[treinta y {0}]>" +
@@ -135,11 +140,11 @@ public class CantadorTest extends TestCase {
         sp.Input();
         assertEquals("cero", sp.cantar(new BigDecimal("0")));
         assertEquals("uno", sp.cantar(new BigDecimal("1")));
-        assertEquals("dos", sp.cantar(new BigDecimal("2")));
+        assertEquals("dositos", sp.cantar(new BigDecimal("2")));
         assertEquals("veintiuno", sp.cantar(new BigDecimal("21")));
         assertEquals("treinta", sp.cantar(new BigDecimal("30")));
         assertEquals("treinta y uno", sp.cantar(new BigDecimal("31")));
         assertEquals("un mil", sp.cantar(new BigDecimal("1000")));
-        assertEquals("dositos mil uno", sp.cantar(new BigDecimal("2001")));
+        assertEquals("dos mil uno", sp.cantar(new BigDecimal("2001")));
     }
-}
+ }

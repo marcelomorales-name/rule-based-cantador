@@ -30,8 +30,8 @@ options {
 
 PARSER_BEGIN(CantadorSpec)
 package name.marcelomorales.cantador.parser;
-import name.marcelomorales.cantador.Cantador;
-public class CantadorSpec extends Cantador {
+import name.marcelomorales.cantador.CantadorBase;
+public class CantadorSpec extends CantadorBase {
 }
 PARSER_END(CantadorSpec)
 
