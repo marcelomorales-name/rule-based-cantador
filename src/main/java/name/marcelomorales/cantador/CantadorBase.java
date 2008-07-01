@@ -208,17 +208,10 @@ public class CantadorBase extends NumberFormat {
 
         @Override
         public boolean equals(Object obj) {
-            if (obj == null) {
-                return false;
+            if (obj instanceof Rule) {
+                return index.equals(((Rule) obj).index);
             }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            final Rule other = (Rule) obj;
-            if (this.index != other.index && (this.index == null || !this.index.equals(other.index))) {
-                return false;
-            }
-            return true;
+            return false;
         }
 
         @Override
@@ -249,17 +242,10 @@ public class CantadorBase extends NumberFormat {
 
         @Override
         public boolean equals(Object obj) {
-            if (obj == null) {
-                return false;
+            if (obj instanceof Apokoptos) {
+                return len.equals(((Apokoptos) obj).len);
             }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            final Apokoptos other = (Apokoptos) obj;
-            if (this.len != other.len && (this.len == null || !this.len.equals(other.len))) {
-                return false;
-            }
-            return true;
+            return false;
         }
 
         @Override

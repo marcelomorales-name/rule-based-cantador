@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : findbugs-exclude.xml.xml
+    Created on : June 30, 2008, 7:50 PM
+    Author     : Marcelo Morales
+    Description:
+        Findbugs exclude filter.
+-->
+
+<FindBugsFilter>
+     <Match>
+         <Package name="name.marcelomorales.cantador.parser" />
+     </Match>
+</FindBugsFilter>
