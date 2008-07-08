@@ -147,4 +147,62 @@ public class CantadorTest extends TestCase {
         assertEquals("un mil", sp.cantar(new BigDecimal("1000")));
         assertEquals("dos mil uno", sp.cantar(new BigDecimal("2001")));
     }
- }
+
+    public void testNumbersInEnglish() throws Exception {
+        Cantador instance = Cantador.newInstance("0 => <zero>" +
+                "1 => <one>" +
+                "2 => <two>" +
+                "3 => <three>" +
+                "4 => <four>" +
+                "5 => <five>" +
+                "6 => <six>" +
+                "7 => <seven>" +
+                "8 => <eight>" +
+                "9 => <nine>" +
+                "10 => <ten>" +
+                "11 => <eleven>" +
+                "12 => <twelve>" +
+                "13 => <thirteen>" +
+                "14 => <fourteen>" +
+                "15 => <fifteen>" +
+                "16 => <sixteen>" +
+                "17 => <seventeen>" +
+                "18 => <eighteen>" +
+                "19 => <nineteen>" +
+                "20 => <twenty[twenty-{0}]>" +
+                "30 => <thirty[thirty-{0}]>" +
+                "40 => <forty[forty-{0}]>" +
+                "50 => <fifty[fifty-{0}]>" +
+                "60 => <sixty[sixty-{0}]>" +
+                "70 => <seventy[seventy-{0}]>" +
+                "80 => <eighty[eighty-{0}]>" +
+                "90 => <ninety[ninety-{0}]>");
+        assertEquals("thirty-two", instance.cantar(new BigDecimal("32")));
+    }
+
+    public void testCommonAmericanVernacular() throws Exception {
+        Cantador instance = Cantador.newInstance("x");
+        assertEquals("one-oh-one", instance.cantar(new BigDecimal("101")));
+        assertEquals("one-ten", instance.cantar(new BigDecimal("110")));
+        assertEquals("two-oh-eight", instance.cantar(new BigDecimal("208")));
+    }
+
+    public void testMostSignificative() throws Exception {
+        Cantador instance = Cantador.newInstance("x");
+        assertEquals("one point two million", instance.cantar(new BigDecimal("1200000")));
+        assertEquals("three million", instance.cantar(new BigDecimal("3000000")));
+        assertEquals("six point four billion", instance.cantar(new BigDecimal("6400000013")));
+    }
+
+    public void testNoThousand() throws Exception {
+        Cantador instance = Cantador.newInstance("x");
+        assertEquals("twelve hundred", instance.cantar(new BigDecimal("1200")));
+    }
+
+    public void testGerman() throws Exception {
+        Cantador instance = Cantador.newInstance("0 => <null>" +
+                "1=><eins> 2=><zwei> 3=><drei> 4=><vier> 5=><fünf> 6=><sechs> 7=><sieben> 8=><acht> 9=><neun>" +
+                "10=><zehn> 11=><elf> 12=><zwölf[{0}zehn]>");
+        assertEquals("fünfzehn", instance.cantar(new BigDecimal("15")));
+    }
+}
