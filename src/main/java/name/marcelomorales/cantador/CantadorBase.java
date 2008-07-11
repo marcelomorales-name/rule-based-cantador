@@ -62,7 +62,7 @@ public class CantadorBase extends NumberFormat {
 
     private boolean finished;
 
-    protected void addRule(String number, String shortLiteral) {
+    protected final void addRule(String number, String shortLiteral) {
         if (finished) {
             throw new IllegalStateException("This one is already finished, can't add more rules");
         }
@@ -73,7 +73,7 @@ public class CantadorBase extends NumberFormat {
         rules.add(r);
     }
 
-    protected void addRule(String number, String shortLiteral, String longLiteral) {
+    protected final void addRule(String number, String shortLiteral, String longLiteral) {
         if (finished) {
             throw new IllegalStateException("This one is already finished, can't add more rules");
         }
@@ -84,7 +84,7 @@ public class CantadorBase extends NumberFormat {
         rules.add(r);
     }
 
-    protected void addApokoptos(String haystack, String needle) {
+    protected final void addApokoptos(String haystack, String needle) {
         if (finished) {
             throw new IllegalStateException("This one is already finished, can't add more rules");
         }
@@ -101,6 +101,15 @@ public class CantadorBase extends NumberFormat {
         finished = false;
     }
 
+    public CantadorBase(CantadorBase other) {
+        rules = other.rules;
+        apokoptos = other.apokoptos;
+        finished = false;
+    }
+
+    protected void customRules() {
+    }
+
     /**
      * Sings the decimal.
      * @param bigDecimal the decimal.
@@ -108,6 +117,7 @@ public class CantadorBase extends NumberFormat {
      */
     public String cantar(BigDecimal bigDecimal) {
         if (!finished) {
+            customRules();
             Collections.sort(rules);
             finished = true;
         }
@@ -132,7 +142,7 @@ public class CantadorBase extends NumberFormat {
             int howManyDigits = rules.get(i).index.toString().length() - 1;
             BigDecimal mayor = new BigDecimal(integerPart).movePointLeft(howManyDigits).setScale(0, RoundingMode.FLOOR);
             BigDecimal menor = new BigDecimal(integerPart).subtract(mayor.movePointRight(howManyDigits));
-            String cantadoMayor = cantar(mayor);
+            String cantadoMayor = cantarParteEntera(mayor);
             for (Apokoptos a : apokoptos) { // HAS to be sorted!
                 if (cantadoMayor.endsWith(a.haystack)) {
                     cantadoMayor = cantadoMayor.substring(0, cantadoMayor.length() - a.haystack.length()).concat(
@@ -142,12 +152,12 @@ public class CantadorBase extends NumberFormat {
             if (menor.equals(BigDecimal.ZERO)) {
                 return MessageFormat.format(rules.get(i).literalcompleto, "", cantadoMayor);
             } else {
-                return MessageFormat.format(rules.get(i).literalcompletoWithSpace, cantar(menor), cantadoMayor);
+                return MessageFormat.format(rules.get(i).literalcompletoWithSpace, cantarParteEntera(menor), cantadoMayor);
             }
         }
         integerPart = integerPart.subtract(rules.get(i).index);
         if (integerPart.signum() > 0) {
-            String parteSiguiente = cantar(new BigDecimal(integerPart));
+            String parteSiguiente = cantarParteEntera(new BigDecimal(integerPart));
             return MessageFormat.format(rules.get(i).literalcompleto, parteSiguiente);
         }
         return rules.get(i).literal;

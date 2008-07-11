@@ -24,6 +24,7 @@ package name.marcelomorales.cantador;
 
 import java.io.StringReader;
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.Locale;
 import junit.framework.TestCase;
 import name.marcelomorales.cantador.parser.CantadorSpec;
@@ -106,6 +107,48 @@ public class CantadorTest extends TestCase {
         assertEquals("diez mil cien millones ciento diez", instance.cantar(new BigDecimal("10100000110")));
         assertEquals("ciento once mil ciento once millones ciento once mil ciento once",
                 instance.cantar(new BigDecimal("111111111111")));
+    }
+
+    public void testSubclass() throws Exception {
+        class MiCantador extends CantadorBase {
+            MiCantador() {
+                super.addRule("1", "primero");
+                super.addApokoptos("primero", "primer");
+                super.addRule("2", "segundo");
+                super.addRule("100", "centEsimo", "centEsimo {0}");
+                super.addRule("1000", "milEsimo", "{1} milEsimo {0}");
+            }
+        }
+        NumberFormat format = new MiCantador();
+        assertEquals("primero", format.format(1));
+        assertEquals("segundo", format.format(2));
+        assertEquals("centEsimo", format.format(100));
+        assertEquals("centEsimo segundo", format.format(102));
+        assertEquals("primer milEsimo segundo", format.format(1002));
+    }
+
+    /**
+     * Gracias a Sergio Criales por dar el requerimiento
+     */
+    public void testSergio_1() {
+        CantadorBase instance = new CantadorBase(Cantador.newCardinalInstance(new Locale("es", "BO"))) {
+
+            @Override
+            protected void customRules() {
+                super.addRule("1", "ún");
+            }
+
+            @Override
+            public String cantar(BigDecimal bigDecimal) {
+                return super.cantar(bigDecimal.setScale(2, BigDecimal.ROUND_HALF_UP)) + " BOLIVIANOS";
+            }
+            
+        };
+        assertEquals("ún 00/100 BOLIVIANOS", instance.cantar(new BigDecimal("1.00")));
+        assertEquals("ún 50/100 BOLIVIANOS", instance.cantar(new BigDecimal("1.5")));
+        assertEquals("tres 50/100 BOLIVIANOS", instance.cantar(new BigDecimal("3.50000001")));
+        System.out.println(instance.cantar(new BigDecimal("101000010")));
+        assertEquals("ciento ún millones diez 00/100 BOLIVIANOS", instance.cantar(new BigDecimal("101000010")));
     }
 
     public void testCantarDecimales() throws ParseException {
