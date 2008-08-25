@@ -50,6 +50,8 @@ import java.util.TreeSet;
  * little bit. I changed the license to GPL v3. I externalized the construction of the formatter. Then there were two
  * methods for defining the format ruleset: chaining and the language (a very simple grammar).</p>
  *
+ * <p>I needed an ordinal female, so I tagged the 0.003</p>
+ *
  * @author Marcelo Morales
  */
 public class CantadorBase extends NumberFormat {

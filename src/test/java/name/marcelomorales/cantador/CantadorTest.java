@@ -147,7 +147,6 @@ public class CantadorTest extends TestCase {
         assertEquals("ún 00/100 BOLIVIANOS", instance.cantar(new BigDecimal("1.00")));
         assertEquals("ún 50/100 BOLIVIANOS", instance.cantar(new BigDecimal("1.5")));
         assertEquals("tres 50/100 BOLIVIANOS", instance.cantar(new BigDecimal("3.50000001")));
-        System.out.println(instance.cantar(new BigDecimal("101000010")));
         assertEquals("ciento ún millones diez 00/100 BOLIVIANOS", instance.cantar(new BigDecimal("101000010")));
     }
 
@@ -255,5 +254,10 @@ public class CantadorTest extends TestCase {
                 "10=><zehn> 11=><elf> 12=><zwölf[{0}zehn]>");
         assertEquals("fünfzehn", instance.cantar(new BigDecimal("15")));
          */
+    }
+
+    public void testFemaleOrdinal() throws Exception {
+        Cantador instance = Cantador.newFemaleOrdinalInstance(new Locale("es", "BO"));
+        assertEquals("vigesimosegunda", instance.cantar(new BigDecimal("22")));
     }
 }
