@@ -111,6 +111,7 @@ public class CantadorTest extends TestCase {
 
     public void testSubclass() throws Exception {
         class MiCantador extends CantadorBase {
+
             MiCantador() {
                 super.addRule("1", "primero");
                 super.addApokoptos("primero", "primer");
@@ -142,7 +143,6 @@ public class CantadorTest extends TestCase {
             public String cantar(BigDecimal bigDecimal) {
                 return super.cantar(bigDecimal.setScale(2, BigDecimal.ROUND_HALF_UP)) + " BOLIVIANOS";
             }
-            
         };
         assertEquals("ún 00/100 BOLIVIANOS", instance.cantar(new BigDecimal("1.00")));
         assertEquals("ún 50/100 BOLIVIANOS", instance.cantar(new BigDecimal("1.5")));
@@ -250,8 +250,8 @@ public class CantadorTest extends TestCase {
     public void testGerman() throws Exception {
         /*
         Cantador instance = Cantador.newInstance("0 => <null>" +
-                "1=><eins> 2=><zwei> 3=><drei> 4=><vier> 5=><fünf> 6=><sechs> 7=><sieben> 8=><acht> 9=><neun>" +
-                "10=><zehn> 11=><elf> 12=><zwölf[{0}zehn]>");
+        "1=><eins> 2=><zwei> 3=><drei> 4=><vier> 5=><fünf> 6=><sechs> 7=><sieben> 8=><acht> 9=><neun>" +
+        "10=><zehn> 11=><elf> 12=><zwölf[{0}zehn]>");
         assertEquals("fünfzehn", instance.cantar(new BigDecimal("15")));
          */
     }
@@ -259,5 +259,73 @@ public class CantadorTest extends TestCase {
     public void testFemaleOrdinal() throws Exception {
         Cantador instance = Cantador.newFemaleOrdinalInstance(new Locale("es", "BO"));
         assertEquals("vigesimosegunda", instance.cantar(new BigDecimal("22")));
+    }
+
+    public void testPolygonNames() throws Exception {
+        // See http://mathforum.org/dr.math/faq/faq.polygon.names.html
+        /*
+         * TODO: hectogon,hecatontagon   100
+         *       chiliagon              1000
+         *       myriagon              10000
+         */
+        Cantador instance = Cantador.newInstance(
+                "1 => <henagon>" + // Special circunstances
+                "2 => <digon>" + // Special circunstances
+                "3 => <trigon>" + // TODO: triangle when alone
+                "4 => <tetragon>" + // TODO: quadrilateral when alone
+                "5 => <pentagon>" +
+                "6 => <hexagon>" +
+                "7 => <heptagon>" +
+                "8 => <octagon>" +
+                "9 => <enneagon>" +
+                "10 => <decagon>" +
+                "11 => <hendecagon>" +
+                "12 => <hendecagon>" +
+                "13 => <triskaidecagon>" +
+                "14 => <tetradecagon>" +
+                "15 => <pentadecagon>" +
+                "16 => <hexadecagon>" +
+                "17 => <heptakaidecagon>" +
+                "18 => <octakaidecagon>" +
+                "19 => <enneakaidecagon>" +
+                "20 => <icosagon[icosikai{0}]>" +
+                "30 => <triacontagon[triacontakai{0}]>" +
+                "40 => <tetracontagon[tetracontakai{0}]>" +
+                "50 => <pentacontagon[pentacontakai{0}]>" +
+                "60 => <hexacontagon[hexacontakai{0}]>" +
+                "70 => <heptacontagon[heptacontakai{0}]>" +
+                "80 => <octacontagon[octacontakai{0}]>" +
+                "90 => <enneacontagon[enneacontakai{0}]>");
+        assertEquals("enneagon", instance.cantar(new BigDecimal("9")));
+        assertEquals("icosagon", instance.cantar(new BigDecimal("20")));
+        assertEquals("icosikaihenagon", instance.cantar(new BigDecimal("21")));
+        assertEquals("icosikaidigon", instance.cantar(new BigDecimal("22")));
+        assertEquals("icosikaitrigon", instance.cantar(new BigDecimal("23")));
+        assertEquals("icosikaitetragon", instance.cantar(new BigDecimal("24")));
+        assertEquals("icosikaipentagon", instance.cantar(new BigDecimal("25")));
+        assertEquals("icosikaihexagon", instance.cantar(new BigDecimal("26")));
+        assertEquals("icosikaiheptagon", instance.cantar(new BigDecimal("27")));
+        assertEquals("icosikaioctagon", instance.cantar(new BigDecimal("28")));
+        assertEquals("icosikaienneagon", instance.cantar(new BigDecimal("29")));
+        assertEquals("triacontagon", instance.cantar(new BigDecimal("30")));
+        assertEquals("triacontakaihenagon", instance.cantar(new BigDecimal("31")));
+        assertEquals("triacontakaidigon", instance.cantar(new BigDecimal("32")));
+        assertEquals("triacontakaitrigon", instance.cantar(new BigDecimal("33")));
+        assertEquals("triacontakaitetragon", instance.cantar(new BigDecimal("34")));
+        assertEquals("triacontakaipentagon", instance.cantar(new BigDecimal("35")));
+        assertEquals("triacontakaihexagon", instance.cantar(new BigDecimal("36")));
+        assertEquals("triacontakaiheptagon", instance.cantar(new BigDecimal("37")));
+        assertEquals("triacontakaioctagon", instance.cantar(new BigDecimal("38")));
+        assertEquals("triacontakaienneagon", instance.cantar(new BigDecimal("39")));
+        assertEquals("tetracontagon", instance.cantar(new BigDecimal("40")));
+        assertEquals("tetracontakaihenagon", instance.cantar(new BigDecimal("41")));
+        assertEquals("tetracontakaidigon", instance.cantar(new BigDecimal("42")));
+        assertEquals("tetracontakaitrigon", instance.cantar(new BigDecimal("43")));
+        assertEquals("tetracontakaitetragon", instance.cantar(new BigDecimal("44")));
+        assertEquals("tetracontakaipentagon", instance.cantar(new BigDecimal("45")));
+        assertEquals("tetracontakaihexagon", instance.cantar(new BigDecimal("46")));
+        assertEquals("tetracontakaiheptagon", instance.cantar(new BigDecimal("47")));
+        assertEquals("tetracontakaioctagon", instance.cantar(new BigDecimal("48")));
+        assertEquals("tetracontakaienneagon", instance.cantar(new BigDecimal("49")));
     }
 }
