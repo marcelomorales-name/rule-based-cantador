@@ -3,3 +3,7 @@ syntax:glob
 .svn
 target
 cobertura.ser
+.classpath
+.project
+.settings/org.eclipse.jdt.core.prefs
+
