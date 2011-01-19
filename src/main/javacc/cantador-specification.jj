@@ -3,7 +3,7 @@
  *
  * PLEASE KEEP UTF-8 ENCODING
  *
- * Copyright (C) 2008 Marcelo Morales (marcelomorales.name@gmail.com)
+ * Copyright (C) 2008-2011 Marcelo Morales (marcelomorales.name@gmail.com)
  *
  *   This file is part of Rulebased Cantador.
  *
