@@ -1,0 +1,1 @@
+A GPL licenced number formatter loosely based on the ibm icu4j implementation.
